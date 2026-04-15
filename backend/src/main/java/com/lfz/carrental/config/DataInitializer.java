@@ -7,7 +7,6 @@ import com.lfz.carrental.mapper.CarInfoMapper;
 import com.lfz.carrental.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,29 +17,52 @@ public class DataInitializer implements CommandLineRunner {
 
     private final SysUserMapper userMapper;
     private final CarInfoMapper carInfoMapper;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         initAdmin();
+        initDemoUsers();
         initCars();
     }
 
+    // 管理员账号：admin / admin123
     private void initAdmin() {
-        Long count = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
-                .eq(SysUser::getUsername, "admin")
-                .eq(SysUser::getDeleted, 0));
-        if (count != null && count > 0) {
+        if (existsUser("admin")) {
             return;
         }
         SysUser admin = new SysUser();
         admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin123"));
+        admin.setPassword("admin123");
         admin.setRealName("系统管理员");
         admin.setPhone("13800000000");
         admin.setStatus(1);
         admin.setRoleCode("ADMIN");
         userMapper.insert(admin);
+    }
+
+    // 演示普通用户：user01~user10 / 123456
+    private void initDemoUsers() {
+        for (int i = 1; i <= 10; i++) {
+            String username = String.format("user%02d", i);
+            if (existsUser(username)) {
+                continue;
+            }
+            SysUser user = new SysUser();
+            user.setUsername(username);
+            user.setPassword("123456");
+            user.setRealName(String.format("测试用户%02d", i));
+            user.setPhone("1390000" + String.format("%04d", i));
+            user.setStatus(1);
+            user.setRoleCode("USER");
+            userMapper.insert(user);
+        }
+    }
+
+    private boolean existsUser(String username) {
+        Long count = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
+                .eq(SysUser::getUsername, username)
+                .eq(SysUser::getDeleted, 0));
+        return count != null && count > 0;
     }
 
     private void initCars() {
@@ -54,7 +76,7 @@ public class DataInitializer implements CommandLineRunner {
         car1.setBrand("Toyota");
         car1.setSeries("Corolla");
         car1.setModel("2024 1.8L Hybrid");
-        car1.setPlateNo("沪A12345");
+        car1.setPlateNo("SH-A12345");
         car1.setSeatCount(5);
         car1.setGearbox("自动");
         car1.setFuelType("油电混合");
@@ -69,7 +91,7 @@ public class DataInitializer implements CommandLineRunner {
         car2.setBrand("Tesla");
         car2.setSeries("Model 3");
         car2.setModel("2023 后轮驱动版");
-        car2.setPlateNo("沪B67890");
+        car2.setPlateNo("SH-B67890");
         car2.setSeatCount(5);
         car2.setGearbox("自动");
         car2.setFuelType("纯电");

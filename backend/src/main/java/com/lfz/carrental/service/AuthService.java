@@ -10,7 +10,6 @@ import com.lfz.carrental.mapper.SysUserMapper;
 import com.lfz.carrental.security.JwtTokenProvider;
 import com.lfz.carrental.vo.UserProfileVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,10 +17,9 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final SysUserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 用户注册：写入基础信息并默认授予 USER 角色
+    // 用户注册：按毕设要求，密码明文入库
     public void register(RegisterRequest request) {
         Long exists = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, request.getUsername())
@@ -32,7 +30,7 @@ public class AuthService {
 
         SysUser user = new SysUser();
         user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(request.getPassword());
         user.setPhone(request.getPhone());
         user.setRealName(request.getRealName());
         user.setStatus(1);
@@ -40,7 +38,7 @@ public class AuthService {
         userMapper.insert(user);
     }
 
-    // 用户登录：校验密码后签发 JWT
+    // 用户登录：明文密码直接比对
     public LoginResponse login(LoginRequest request) {
         SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, request.getUsername())
@@ -48,7 +46,7 @@ public class AuthService {
         if (user == null || user.getStatus() == null || user.getStatus() != 1) {
             throw new ApiException("用户不存在或已被禁用");
         }
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!request.getPassword().equals(user.getPassword())) {
             throw new ApiException("用户名或密码错误");
         }
 
@@ -56,7 +54,6 @@ public class AuthService {
         return new LoginResponse(token, user.getUsername(), user.getRoleCode());
     }
 
-    // 获取当前用户资料
     public UserProfileVO getProfile(Long userId) {
         SysUser user = userMapper.selectById(userId);
         if (user == null || user.getDeleted() != 0) {
@@ -72,3 +69,4 @@ public class AuthService {
         return profile;
     }
 }
+
