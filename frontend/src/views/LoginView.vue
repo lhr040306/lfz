@@ -32,7 +32,10 @@ async function onLogin() {
       username: data.username,
       roleCode: data.roleCode
     });
-    ElMessage.success("登录成功");
+    ElMessage.success({
+      message: "登录成功",
+      duration: 1000
+    });
     router.push("/cars");
   } finally {
     loading.value = false;

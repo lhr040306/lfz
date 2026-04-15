@@ -19,7 +19,8 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
   sql:
     init:
-      mode: always
+      # 数据库已初始化后建议关闭自动建表，避免每次启动重复执行
+      mode: never
       schema-locations: classpath:db/schema.sql
 
 mybatis-plus:
