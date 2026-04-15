@@ -1,0 +1,57 @@
+CREATE TABLE IF NOT EXISTS sys_user (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    real_name VARCHAR(50),
+    status TINYINT NOT NULL DEFAULT 1,
+    role_code VARCHAR(20) NOT NULL DEFAULT 'USER',
+    deleted TINYINT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS car_info (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    brand VARCHAR(30) NOT NULL,
+    series VARCHAR(30),
+    model VARCHAR(50) NOT NULL,
+    plate_no VARCHAR(20) NOT NULL UNIQUE,
+    seat_count INT NOT NULL,
+    gearbox VARCHAR(20),
+    fuel_type VARCHAR(20),
+    day_rent DECIMAL(10,2) NOT NULL,
+    deposit DECIMAL(10,2) NOT NULL,
+    status TINYINT NOT NULL DEFAULT 1,
+    mileage INT NOT NULL DEFAULT 0,
+    cover_url VARCHAR(255),
+    deleted TINYINT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS rental_order (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_no VARCHAR(40) NOT NULL UNIQUE,
+    user_id BIGINT NOT NULL,
+    car_id BIGINT NOT NULL,
+    rent_start_time DATETIME NOT NULL,
+    rent_end_time DATETIME NOT NULL,
+    rent_days INT NOT NULL,
+    day_rent DECIMAL(10,2) NOT NULL,
+    deposit DECIMAL(10,2) NOT NULL,
+    base_amount DECIMAL(10,2) NOT NULL,
+    extra_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total_amount DECIMAL(10,2) NOT NULL,
+    order_status TINYINT NOT NULL,
+    remark VARCHAR(255),
+    deleted TINYINT NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_order_user (user_id),
+    INDEX idx_order_car (car_id),
+    INDEX idx_order_status (order_status),
+    CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES sys_user(id),
+    CONSTRAINT fk_order_car FOREIGN KEY (car_id) REFERENCES car_info(id)
+);
+
