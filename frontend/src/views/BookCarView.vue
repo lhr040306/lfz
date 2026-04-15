@@ -7,6 +7,7 @@ import { fetchCarDetail } from "@/api/modules/cars";
 import { createOrder } from "@/api/modules/orders";
 import type { CarInfo } from "@/api/types";
 
+// 租车下单页：根据时间区间计算租赁天数与预估金额
 const route = useRoute();
 const router = useRouter();
 const loading = ref(false);
@@ -58,7 +59,7 @@ async function submitOrder() {
     return;
   }
   if (rentDays.value <= 0) {
-    ElMessage.warning("Please select a valid rent time range");
+    ElMessage.warning("请选择有效的租赁时间");
     return;
   }
 
@@ -70,7 +71,7 @@ async function submitOrder() {
       rentEndTime: form.rentEndTime,
       remark: form.remark
     });
-    ElMessage.success("Order created, please continue payment in My Orders");
+    ElMessage.success("下单成功，请在“我的订单”完成支付");
     router.push("/orders");
   } finally {
     submitLoading.value = false;
@@ -83,45 +84,45 @@ onMounted(loadCar);
 <template>
   <section class="panel">
     <div class="title-row">
-      <h2>Book Car</h2>
-      <el-button @click="$router.push('/cars')">Back</el-button>
+      <h2>确认租车</h2>
+      <el-button @click="$router.push('/cars')">返回车辆列表</el-button>
     </div>
     <el-skeleton :loading="loading" :rows="5" animated>
       <div v-if="car" class="booking-wrap">
         <div class="car-block">
-          <img :src="car.coverUrl || 'https://picsum.photos/640/420?car'" alt="car cover" />
+          <img :src="car.coverUrl || 'https://picsum.photos/640/420?car'" alt="车辆封面" />
           <h3>{{ car.brand }} {{ car.model }}</h3>
           <p class="muted">{{ car.series || "-" }} | {{ car.gearbox || "-" }} | {{ car.fuelType || "-" }}</p>
-          <p><strong>¥{{ car.dayRent }}/day</strong> | Deposit: ¥{{ car.deposit }}</p>
+          <p><strong>{{ car.dayRent }} 元/天</strong> | 押金：{{ car.deposit }} 元</p>
         </div>
         <div class="form-block">
           <el-form label-width="130px">
-            <el-form-item label="Rent Start">
+            <el-form-item label="租赁开始时间">
               <el-date-picker
                 v-model="form.rentStartTime"
                 type="datetime"
-                placeholder="Select start"
+                placeholder="请选择开始时间"
                 value-format="YYYY-MM-DD HH:mm:ss"
                 format="YYYY-MM-DD HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item label="Rent End">
+            <el-form-item label="租赁结束时间">
               <el-date-picker
                 v-model="form.rentEndTime"
                 type="datetime"
-                placeholder="Select end"
+                placeholder="请选择结束时间"
                 value-format="YYYY-MM-DD HH:mm:ss"
                 format="YYYY-MM-DD HH:mm:ss"
               />
             </el-form-item>
-            <el-form-item label="Remark">
+            <el-form-item label="备注">
               <el-input v-model="form.remark" type="textarea" :rows="3" />
             </el-form-item>
           </el-form>
           <div class="summary">
-            <p>Rent days: {{ rentDays }}</p>
-            <p>Estimated amount: <strong>¥{{ estimateTotal.toFixed(2) }}</strong></p>
-            <el-button type="primary" :loading="submitLoading" @click="submitOrder">Create Order</el-button>
+            <p>租赁天数：{{ rentDays }} 天</p>
+            <p>预估总金额：<strong>{{ estimateTotal.toFixed(2) }} 元</strong></p>
+            <el-button type="primary" :loading="submitLoading" @click="submitOrder">提交订单</el-button>
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { fetchCars } from "@/api/modules/cars";
 import type { CarInfo } from "@/api/types";
 import { useAuthStore } from "@/stores/auth";
 
+// 车辆大厅：支持分页与价格筛选
 const router = useRouter();
 const authStore = useAuthStore();
 const loading = ref(false);
@@ -52,28 +53,28 @@ onMounted(loadCars);
 <template>
   <section class="panel">
     <div class="title-row">
-      <h2>Available Cars</h2>
-      <span class="muted">Online booking and instant order creation</span>
+      <h2>可租车辆</h2>
+      <span class="muted">在线选车，快速下单</span>
     </div>
     <div class="filters">
-      <el-input v-model="query.brand" placeholder="Brand" clearable />
-      <el-input-number v-model="query.minPrice" :min="0" :controls="false" placeholder="Min/day" />
-      <el-input-number v-model="query.maxPrice" :min="0" :controls="false" placeholder="Max/day" />
-      <el-button type="primary" @click="loadCars">Search</el-button>
-      <el-button @click="resetFilter">Reset</el-button>
+      <el-input v-model="query.brand" placeholder="品牌筛选" clearable />
+      <el-input-number v-model="query.minPrice" :min="0" :controls="false" placeholder="最低日租" />
+      <el-input-number v-model="query.maxPrice" :min="0" :controls="false" placeholder="最高日租" />
+      <el-button type="primary" @click="loadCars">查询</el-button>
+      <el-button @click="resetFilter">重置</el-button>
     </div>
     <el-skeleton :loading="loading" :rows="6" animated>
       <div class="car-grid">
         <article v-for="car in cars" :key="car.id" class="car-card">
-          <img :src="car.coverUrl || 'https://picsum.photos/600/400?car'" alt="car cover" />
+          <img :src="car.coverUrl || 'https://picsum.photos/600/400?car'" alt="车辆封面" />
           <div class="card-content">
             <h3>{{ car.brand }} {{ car.model }}</h3>
             <p class="muted">{{ car.series || "-" }} | {{ car.gearbox || "-" }} | {{ car.fuelType || "-" }}</p>
             <div class="price-row">
-              <strong>¥{{ car.dayRent }}/day</strong>
-              <span>Deposit: ¥{{ car.deposit }}</span>
+              <strong>{{ car.dayRent }} 元/天</strong>
+              <span>押金：{{ car.deposit }} 元</span>
             </div>
-            <el-button type="primary" @click="goBook(car.id)">Book Now</el-button>
+            <el-button type="primary" @click="goBook(car.id)">立即租车</el-button>
           </div>
         </article>
       </div>

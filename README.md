@@ -112,3 +112,14 @@ Car status:
 - `2` Maintaining
 - `3` Offline
 
+## 7. UTF-8 Encoding (Important)
+
+- Repository-level encoding is enforced by `.editorconfig` with `charset = utf-8`.
+- Backend:
+  - Maven compile/resources encoding is set to `UTF-8` in `backend/pom.xml`.
+  - HTTP response/request encoding is forced to UTF-8 in `backend/src/main/resources/application.yml`.
+- Frontend:
+  - `frontend/index.html` uses `<meta charset="UTF-8" />`.
+
+For IntelliJ IDEA, also ensure:
+- `Settings -> Editor -> File Encodings -> Global/Project = UTF-8`

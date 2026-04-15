@@ -21,6 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 用户注册：写入基础信息并默认授予 USER 角色
     public void register(RegisterRequest request) {
         Long exists = userMapper.selectCount(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, request.getUsername())
@@ -39,6 +40,7 @@ public class AuthService {
         userMapper.insert(user);
     }
 
+    // 用户登录：校验密码后签发 JWT
     public LoginResponse login(LoginRequest request) {
         SysUser user = userMapper.selectOne(new LambdaQueryWrapper<SysUser>()
                 .eq(SysUser::getUsername, request.getUsername())
@@ -54,6 +56,7 @@ public class AuthService {
         return new LoginResponse(token, user.getUsername(), user.getRoleCode());
     }
 
+    // 获取当前用户资料
     public UserProfileVO getProfile(Long userId) {
         SysUser user = userMapper.selectById(userId);
         if (user == null || user.getDeleted() != 0) {
@@ -69,4 +72,3 @@ public class AuthService {
         return profile;
     }
 }
-

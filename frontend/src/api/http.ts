@@ -12,6 +12,7 @@ const http = axios.create({
   timeout: 10000
 });
 
+// 自动附带 JWT，统一鉴权
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -27,8 +28,8 @@ http.interceptors.response.use(
       if (body.code === 0) {
         return body.data;
       }
-      ElMessage.error(body.message || "Request failed");
-      return Promise.reject(new Error(body.message || "Request failed"));
+      ElMessage.error(body.message || "请求失败");
+      return Promise.reject(new Error(body.message || "请求失败"));
     }
     return response.data;
   },
@@ -41,15 +42,14 @@ http.interceptors.response.use(
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }
-      ElMessage.error("Login expired. Please login again.");
+      ElMessage.error("登录已失效，请重新登录");
       return Promise.reject(error);
     }
 
-    const message = error?.response?.data?.message || error?.message || "Network error";
+    const message = error?.response?.data?.message || error?.message || "网络异常";
     ElMessage.error(message);
     return Promise.reject(error);
   }
 );
 
 export default http;
-

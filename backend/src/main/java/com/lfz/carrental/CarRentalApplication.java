@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @MapperScan("com.lfz.carrental.mapper")
 public class CarRentalApplication {
 
+    // 项目启动入口
     public static void main(String[] args) {
         SpringApplication.run(CarRentalApplication.class, args);
     }
 }
-

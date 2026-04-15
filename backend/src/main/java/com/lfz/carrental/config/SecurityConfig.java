@@ -33,6 +33,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // 采用 JWT 无状态认证：禁用会话，统一由过滤器解析令牌
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -56,6 +57,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // 密码统一使用 BCrypt 加密
         return new BCryptPasswordEncoder();
     }
 
@@ -71,4 +73,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

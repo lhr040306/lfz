@@ -24,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @RequiredArgsConstructor
 public class OrderService {
 
+    // 订单状态定义
     public static final int ORDER_WAIT_PAY = 10;
     public static final int ORDER_WAIT_PICKUP = 20;
     public static final int ORDER_RENTING = 30;
@@ -33,6 +34,7 @@ public class OrderService {
     private final RentalOrderMapper orderMapper;
     private final CarInfoMapper carInfoMapper;
 
+    // 用户创建订单：校验时间冲突并计算费用
     public RentalOrder createOrder(Long userId, OrderCreateRequest request) {
         LocalDateTime start = request.getRentStartTime();
         LocalDateTime end = request.getRentEndTime();
@@ -82,6 +84,7 @@ public class OrderService {
         return order;
     }
 
+    // 用户查询自己的订单
     public IPage<RentalOrder> myOrders(Long userId, Integer page, Integer size) {
         return orderMapper.selectPage(new Page<>(page, size),
                 new LambdaQueryWrapper<RentalOrder>()
@@ -90,6 +93,7 @@ public class OrderService {
                         .orderByDesc(RentalOrder::getCreatedAt));
     }
 
+    // 用户查看单个订单详情
     public RentalOrder getOrderByIdForUser(Long userId, Long orderId) {
         RentalOrder order = orderMapper.selectById(orderId);
         if (order == null || order.getDeleted() != 0) {
@@ -101,6 +105,7 @@ public class OrderService {
         return order;
     }
 
+    // 仅待支付订单可取消
     public void cancelOrder(Long userId, Long orderId) {
         RentalOrder order = getOrderByIdForUser(userId, orderId);
         if (order.getOrderStatus() != ORDER_WAIT_PAY) {
@@ -110,6 +115,7 @@ public class OrderService {
         orderMapper.updateById(order);
     }
 
+    // 支付成功后进入待取车
     public void payOrder(Long userId, Long orderId) {
         RentalOrder order = getOrderByIdForUser(userId, orderId);
         if (order.getOrderStatus() != ORDER_WAIT_PAY) {
@@ -119,6 +125,7 @@ public class OrderService {
         orderMapper.updateById(order);
     }
 
+    // 管理员分页查询订单
     public IPage<RentalOrder> listAdminOrders(Integer page, Integer size, Integer status) {
         LambdaQueryWrapper<RentalOrder> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RentalOrder::getDeleted, 0);
@@ -127,6 +134,7 @@ public class OrderService {
         return orderMapper.selectPage(new Page<>(page, size), wrapper);
     }
 
+    // 确认出车：待取车 -> 租赁中
     public void confirmPickup(Long orderId) {
         RentalOrder order = orderMapper.selectById(orderId);
         if (order == null || order.getDeleted() != 0) {
@@ -139,6 +147,7 @@ public class OrderService {
         orderMapper.updateById(order);
     }
 
+    // 确认还车：计算额外费用并结算
     public void confirmReturn(Long orderId, OrderReturnRequest request) {
         RentalOrder order = orderMapper.selectById(orderId);
         if (order == null || order.getDeleted() != 0) {
@@ -160,4 +169,3 @@ public class OrderService {
         return "ORD" + timePart + random;
     }
 }
-

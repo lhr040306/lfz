@@ -7,7 +7,9 @@ const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
 
+// 顶部导航高亮状态
 const activePath = computed(() => route.path);
+const roleName = computed(() => (authStore.roleCode === "ADMIN" ? "管理员" : "用户"));
 
 function go(path: string) {
   router.push(path);
@@ -22,27 +24,27 @@ function logout() {
 <template>
   <div class="app-root">
     <header class="app-header">
-      <div class="app-brand" @click="go('/cars')">Car Rental System</div>
+      <div class="app-brand" @click="go('/cars')">汽车租赁管理系统</div>
       <nav class="app-nav">
-        <button :class="{ active: activePath.startsWith('/cars') }" @click="go('/cars')">Cars</button>
+        <button :class="{ active: activePath.startsWith('/cars') }" @click="go('/cars')">车辆大厅</button>
         <button v-if="authStore.isLoggedIn" :class="{ active: activePath === '/orders' }" @click="go('/orders')">
-          My Orders
+          我的订单
         </button>
         <button v-if="authStore.isAdmin" :class="{ active: activePath === '/admin/cars' }" @click="go('/admin/cars')">
-          Admin Cars
+          车辆管理
         </button>
         <button
           v-if="authStore.isAdmin"
           :class="{ active: activePath === '/admin/orders' }"
           @click="go('/admin/orders')"
         >
-          Admin Orders
+          订单管理
         </button>
       </nav>
       <div class="app-user">
-        <span v-if="authStore.isLoggedIn">{{ authStore.username }} ({{ authStore.roleCode }})</span>
-        <button v-if="!authStore.isLoggedIn" @click="go('/login')">Login</button>
-        <button v-else @click="logout">Logout</button>
+        <span v-if="authStore.isLoggedIn">{{ authStore.username }}（{{ roleName }}）</span>
+        <button v-if="!authStore.isLoggedIn" @click="go('/login')">登录</button>
+        <button v-else @click="logout">退出登录</button>
       </div>
     </header>
     <main class="app-main">
@@ -50,4 +52,3 @@ function logout() {
     </main>
   </div>
 </template>
-

@@ -20,6 +20,7 @@ public class CarService {
 
     private final CarInfoMapper carInfoMapper;
 
+    // 用户侧车辆列表：仅返回可租车辆
     public IPage<CarInfo> listCars(Integer page, Integer size, String brand, BigDecimal minPrice, BigDecimal maxPrice) {
         LambdaQueryWrapper<CarInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CarInfo::getStatus, 1);
@@ -31,6 +32,7 @@ public class CarService {
         return carInfoMapper.selectPage(new Page<>(page, size), wrapper);
     }
 
+    // 管理员车辆列表：可按状态筛选
     public IPage<CarInfo> listAdminCars(Integer page, Integer size, String brand, Integer status) {
         LambdaQueryWrapper<CarInfo> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(CarInfo::getDeleted, 0);
@@ -40,6 +42,7 @@ public class CarService {
         return carInfoMapper.selectPage(new Page<>(page, size), wrapper);
     }
 
+    // 用户侧车辆详情
     public CarInfo getPublicCarDetail(Long id) {
         CarInfo car = carInfoMapper.selectById(id);
         if (car == null || car.getDeleted() != 0 || car.getStatus() != 1) {
@@ -48,6 +51,7 @@ public class CarService {
         return car;
     }
 
+    // 管理员新增车辆
     public CarInfo create(CarCreateRequest request) {
         ensurePlateUnique(request.getPlateNo(), null);
         CarInfo car = new CarInfo();
@@ -58,6 +62,7 @@ public class CarService {
         return car;
     }
 
+    // 管理员编辑车辆
     public CarInfo update(Long id, CarUpdateRequest request) {
         CarInfo car = carInfoMapper.selectById(id);
         if (car == null || car.getDeleted() != 0) {
@@ -71,6 +76,7 @@ public class CarService {
         return car;
     }
 
+    // 车辆状态调整（可租/维护/下架）
     public void updateStatus(Long id, Integer status) {
         CarInfo car = carInfoMapper.selectById(id);
         if (car == null || car.getDeleted() != 0) {

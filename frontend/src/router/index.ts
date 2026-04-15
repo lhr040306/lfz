@@ -47,6 +47,7 @@ const router = createRouter({
   routes
 });
 
+// 路由守卫：控制登录与管理员页面访问权限
 router.beforeEach((to) => {
   const authStore = useAuthStore();
   if (to.path === "/login" && authStore.isLoggedIn) {
@@ -65,4 +66,3 @@ router.beforeEach((to) => {
 });
 
 export default router;
-
