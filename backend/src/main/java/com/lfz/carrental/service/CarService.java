@@ -7,18 +7,22 @@ import com.lfz.carrental.common.ApiException;
 import com.lfz.carrental.dto.car.CarCreateRequest;
 import com.lfz.carrental.dto.car.CarUpdateRequest;
 import com.lfz.carrental.entity.CarInfo;
+import com.lfz.carrental.entity.RentalOrder;
 import com.lfz.carrental.mapper.CarInfoMapper;
+import com.lfz.carrental.mapper.RentalOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CarService {
 
     private final CarInfoMapper carInfoMapper;
+    private final RentalOrderMapper orderMapper;
 
     // 用户侧车辆列表：仅返回可租车辆
     public IPage<CarInfo> listCars(Integer page, Integer size, String brand, BigDecimal minPrice, BigDecimal maxPrice) {
@@ -84,6 +88,27 @@ public class CarService {
         }
         car.setStatus(status);
         carInfoMapper.updateById(car);
+    }
+
+    // 车辆删除：存在进行中订单时不允许删除
+    public void deleteCar(Long id) {
+        CarInfo car = carInfoMapper.selectById(id);
+        if (car == null || car.getDeleted() != 0) {
+            throw new ApiException("车辆不存在");
+        }
+
+        Long activeOrderCount = orderMapper.selectCount(new LambdaQueryWrapper<RentalOrder>()
+                .eq(RentalOrder::getCarId, id)
+                .eq(RentalOrder::getDeleted, 0)
+                .in(RentalOrder::getOrderStatus, List.of(
+                        OrderService.ORDER_WAIT_PAY,
+                        OrderService.ORDER_WAIT_PICKUP,
+                        OrderService.ORDER_RENTING
+                )));
+        if (activeOrderCount != null && activeOrderCount > 0) {
+            throw new ApiException("该车辆存在进行中订单，不能删除");
+        }
+        carInfoMapper.deleteById(id);
     }
 
     private void ensurePlateUnique(String plateNo, Long excludeId) {

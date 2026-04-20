@@ -2,11 +2,13 @@
 import { onMounted, reactive, ref } from "vue";
 import {
   adminCreateCar,
+  adminDeleteCar,
   adminFetchCars,
   adminUpdateCar,
   adminUpdateCarStatus,
   type CarPayload
 } from "@/api/modules/cars";
+import { ElMessageBox } from "element-plus";
 import type { CarInfo } from "@/api/types";
 
 // 管理员车辆管理：支持新增、编辑、上下架
@@ -110,6 +112,12 @@ async function changeStatus(id: number, status: number) {
   await loadCars();
 }
 
+async function removeCar(id: number) {
+  await ElMessageBox.confirm("确定删除该车辆吗？", "提示", { type: "warning" });
+  await adminDeleteCar(id);
+  await loadCars();
+}
+
 onMounted(loadCars);
 </script>
 
@@ -140,9 +148,10 @@ onMounted(loadCars);
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="120" fixed="right">
+      <el-table-column label="操作" width="180" fixed="right">
         <template #default="{ row }">
           <el-button type="primary" link @click="openEdit(row)">编辑</el-button>
+          <el-button type="danger" link @click="removeCar(row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -203,4 +212,3 @@ onMounted(loadCars);
   }
 }
 </style>
-

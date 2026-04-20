@@ -47,3 +47,7 @@ export function adminUpdateCar(id: number, payload: CarPayload) {
 export function adminUpdateCarStatus(id: number, status: number) {
   return http.put<never, void>(`/admin/cars/${id}/status`, { status });
 }
+
+export function adminDeleteCar(id: number) {
+  return http.delete<never, void>(`/admin/cars/${id}`);
+}

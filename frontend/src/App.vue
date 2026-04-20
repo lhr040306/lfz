@@ -35,10 +35,24 @@ function logout() {
         </button>
         <button
           v-if="authStore.isAdmin"
+          :class="{ active: activePath === '/admin/customers' }"
+          @click="go('/admin/customers')"
+        >
+          客户管理
+        </button>
+        <button
+          v-if="authStore.isAdmin"
           :class="{ active: activePath === '/admin/orders' }"
           @click="go('/admin/orders')"
         >
           订单管理
+        </button>
+        <button
+          v-if="authStore.isAdmin"
+          :class="{ active: activePath === '/admin/stats' }"
+          @click="go('/admin/stats')"
+        >
+          统计报表
         </button>
       </nav>
       <div class="app-user">

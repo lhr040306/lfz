@@ -57,3 +57,34 @@ export interface RentalOrder {
   updatedAt: string;
 }
 
+export interface CustomerInfo {
+  id: number;
+  username: string;
+  realName: string;
+  phone?: string;
+  status: number;
+  createdAt: string;
+}
+
+export interface StatsOverview {
+  totalRevenue: number;
+  totalExtraAmount: number;
+  totalOrders: number;
+  finishedOrders: number;
+  canceledOrders: number;
+  finishRate: number;
+}
+
+export interface RevenueTrendPoint {
+  date: string;
+  revenue: number;
+}
+
+export interface CarRevenueRank {
+  carId: number;
+  brand: string;
+  model: string;
+  plateNo: string;
+  revenue: number;
+  orderCount: number;
+}
