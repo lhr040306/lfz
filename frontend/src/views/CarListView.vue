@@ -53,8 +53,11 @@ onMounted(loadCars);
 <template>
   <section class="panel">
     <div class="title-row">
-      <h2>可租车辆</h2>
-      <span class="muted">在线选车，快速下单</span>
+      <div>
+        <h2>可租车辆</h2>
+        <span class="muted">在线选车，快速下单</span>
+      </div>
+      <el-tag type="success" effect="dark">实时库存 {{ total }} 辆</el-tag>
     </div>
     <div class="filters">
       <el-input v-model="query.brand" placeholder="品牌筛选" clearable />
@@ -74,7 +77,7 @@ onMounted(loadCars);
               <strong>{{ car.dayRent }} 元/天</strong>
               <span>押金：{{ car.deposit }} 元</span>
             </div>
-            <el-button type="primary" @click="goBook(car.id)">立即租车</el-button>
+            <el-button type="primary" round @click="goBook(car.id)">立即租车</el-button>
           </div>
         </article>
       </div>
@@ -96,7 +99,11 @@ onMounted(loadCars);
   display: grid;
   grid-template-columns: 1.2fr repeat(2, 1fr) auto auto;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  padding: 12px;
+  border: 1px dashed #d8e4f6;
+  border-radius: 14px;
+  background: #f9fbff;
 }
 
 .car-grid {
@@ -107,14 +114,21 @@ onMounted(loadCars);
 
 .car-card {
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  border-color: #b8cae6;
+  box-shadow: 0 16px 28px rgba(20, 44, 83, 0.12);
 }
 
 .car-card img {
   width: 100%;
-  height: 180px;
+  height: 186px;
   object-fit: cover;
 }
 
@@ -134,6 +148,10 @@ h3 {
   justify-content: space-between;
 }
 
+.price-row strong {
+  color: var(--brand-deep);
+}
+
 .pager {
   margin-top: 16px;
   display: flex;
@@ -146,4 +164,3 @@ h3 {
   }
 }
 </style>
-

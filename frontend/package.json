@@ -9,9 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@types/matter-js": "^0.20.2",
     "axios": "^1.7.2",
     "dayjs": "^1.11.13",
     "element-plus": "^2.7.8",
+    "matter-js": "^0.20.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.31",
     "vue-router": "^4.4.0"
@@ -24,4 +26,3 @@
     "vue-tsc": "^2.0.24"
   }
 }
-

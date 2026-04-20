@@ -1,4 +1,4 @@
-<script setup lang="ts">
+﻿<script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
@@ -10,6 +10,7 @@ const authStore = useAuthStore();
 // 顶部导航高亮状态
 const activePath = computed(() => route.path);
 const roleName = computed(() => (authStore.roleCode === "ADMIN" ? "管理员" : "用户"));
+const isLoginPage = computed(() => route.path === "/login");
 
 function go(path: string) {
   router.push(path);
@@ -23,7 +24,7 @@ function logout() {
 
 <template>
   <div class="app-root">
-    <header class="app-header">
+    <header v-if="!isLoginPage" class="app-header">
       <div class="app-brand" @click="go('/cars')">汽车租赁管理系统</div>
       <nav class="app-nav">
         <button :class="{ active: activePath.startsWith('/cars') }" @click="go('/cars')">车辆大厅</button>
@@ -61,8 +62,16 @@ function logout() {
         <button v-else @click="logout">退出登录</button>
       </div>
     </header>
-    <main class="app-main">
+    <main :class="isLoginPage ? 'app-main auth-main' : 'app-main'">
       <router-view />
     </main>
   </div>
 </template>
+
+<style scoped>
+.auth-main {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+</style>

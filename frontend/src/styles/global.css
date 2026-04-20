@@ -1,11 +1,14 @@
 :root {
-  --bg: #f4f7fb;
+  --bg: #f6f8fc;
+  --bg-soft: #eef3ff;
   --panel: #ffffff;
-  --line: #e5e9f2;
-  --text: #1f2a37;
-  --muted: #5f6f82;
+  --line: #d9e2f1;
+  --text: #1b2734;
+  --muted: #65758a;
   --brand: #0f766e;
-  --brand-2: #155e75;
+  --brand-deep: #0b5b55;
+  --accent: #1d4ed8;
+  --shadow: 0 18px 38px rgba(24, 42, 74, 0.08);
 }
 
 * {
@@ -14,12 +17,17 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background:
-    radial-gradient(circle at 90% 0%, #d8f3ef 0%, transparent 40%),
-    radial-gradient(circle at 0% 100%, #e5eefb 0%, transparent 50%),
-    var(--bg);
+  font-family:
+    "Source Han Sans SC",
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Segoe UI",
+    sans-serif;
   color: var(--text);
+  background:
+    radial-gradient(circle at 14% 16%, rgba(29, 78, 216, 0.12) 0, transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(15, 118, 110, 0.14) 0, transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #f3f6fd 38%, #f7f8fc 100%);
 }
 
 a {
@@ -34,44 +42,56 @@ a {
 .app-header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 12px 20px;
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid var(--line);
-  backdrop-filter: blur(8px);
+  gap: 14px;
+  padding: 14px 22px;
+  background: rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid #dbe5f4;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 6px 20px rgba(20, 39, 69, 0.05);
 }
 
 .app-brand {
-  font-weight: 700;
   cursor: pointer;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.4px;
+  color: #143558;
 }
 
 .app-nav {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .app-nav button,
 .app-user button {
-  border: 1px solid var(--line);
+  border: 1px solid #d9e4f3;
   background: #fff;
-  color: var(--text);
-  padding: 6px 12px;
+  color: #2b405b;
+  padding: 6px 13px;
   border-radius: 999px;
   cursor: pointer;
-  transition: 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-.app-nav button.active,
-.app-nav button:hover,
+.app-nav button.active {
+  background: linear-gradient(135deg, #0f766e 0%, #0b5b55 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.25);
+}
+
+.app-nav button:hover:not(.active),
 .app-user button:hover {
-  border-color: var(--brand);
-  color: var(--brand);
+  border-color: #9db3d6;
+  transform: translateY(-1px);
 }
 
 .app-user {
@@ -83,17 +103,18 @@ a {
 }
 
 .app-main {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 24px 16px 40px;
+  padding: 24px 16px 44px;
 }
 
 .panel {
   background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 24px rgba(28, 46, 78, 0.06);
+  border: 1px solid #dce5f3;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+  animation: rise-in 0.45s ease both;
 }
 
 .title-row {
@@ -101,25 +122,43 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .title-row h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: 24px;
+  line-height: 1;
 }
 
 .muted {
   color: var(--muted);
 }
 
-@media (max-width: 960px) {
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 980px) {
   .app-header {
     flex-wrap: wrap;
+    padding: 12px 14px;
   }
 
   .app-main {
     padding-top: 14px;
+  }
+
+  .title-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
