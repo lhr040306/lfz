@@ -90,10 +90,6 @@ async function onRegister() {
   }
 }
 
-function onForgotPassword() {
-  ElMessage.info("演示系统暂不支持找回密码，请联系管理员处理。");
-}
-
 function pseudo(seed: number, min: number, max: number) {
   const value = (Math.sin(seed * 15.238) + 1) / 2;
   return min + value * (max - min);
@@ -583,10 +579,7 @@ onBeforeUnmount(() => {
               <el-input v-model="loginForm.password" show-password placeholder="请输入密码" />
             </el-form-item>
             <el-form-item>
-              <div class="form-meta">
-                <el-checkbox v-model="rememberMe">记住我</el-checkbox>
-                <button type="button" class="link-btn" @click="onForgotPassword">忘记密码?</button>
-              </div>
+              <el-checkbox v-model="rememberMe">记住我</el-checkbox>
             </el-form-item>
             <el-form-item>
               <el-button class="login-btn" type="primary" :loading="loading" @click="onLogin">登录</el-button>
@@ -660,33 +653,14 @@ onBeforeUnmount(() => {
   margin: 0 0 8px;
   font-size: 29px;
   color: #0f2742;
+  text-align: center;
 }
 
 .subtitle {
   margin: 0 0 6px;
   color: #4d5f77;
   font-size: 14px;
-}
-
-.form-meta {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.link-btn {
-  border: none;
-  background: transparent;
-  color: #1259b2;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-}
-
-.link-btn:hover {
-  text-decoration: underline;
+  text-align: center;
 }
 
 .login-btn {
@@ -710,7 +684,17 @@ onBeforeUnmount(() => {
   box-shadow: 0 0 0 1px #9cb5d7 inset;
 }
 
-:deep(.el-tabs__item) {
+:deep(.auth-tabs .el-tabs__nav) {
+  width: 100%;
+  display: flex;
+}
+
+:deep(.auth-tabs .el-tabs__item) {
+  flex: 1;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: 700;
 }
 
