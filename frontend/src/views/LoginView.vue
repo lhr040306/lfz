@@ -44,6 +44,9 @@ const carStartX = 220;
 const wheelOffsetX = 34;
 const chassisYOffset = 52;
 const wheelYOffset = 30;
+const usernameFocusShift = 180;
+const passwordFocusShift = 400;
+const focusShiftEase = 0.12;
 
 let animationId = 0;
 let roadY = 0;
@@ -52,6 +55,8 @@ let viewportHeight = 0;
 let boostUntil = 0;
 let carX = carStartX;
 let wheelSpin = 0;
+let focusShiftTarget = 0;
+let focusShiftCurrent = 0;
 
 function triggerBoost() {
   boostUntil = performance.now() + 1200;
@@ -88,6 +93,18 @@ async function onRegister() {
   } finally {
     loading.value = false;
   }
+}
+
+function onUsernameFocus() {
+  focusShiftTarget = usernameFocusShift;
+}
+
+function onPasswordFocus() {
+  focusShiftTarget = passwordFocusShift;
+}
+
+function onLoginFieldBlur() {
+  focusShiftTarget = 0;
 }
 
 function pseudo(seed: number, min: number, max: number) {
@@ -412,7 +429,7 @@ function drawScene(ctx: CanvasCtx, speed: number) {
     return;
   }
 
-  const cameraX = chassis.position.x - viewportWidth * 0.35;
+  const cameraX = chassis.position.x - viewportWidth * 0.35 - focusShiftCurrent;
   drawSky(ctx);
   drawBuildings(ctx, cameraX);
   drawTrees(ctx, cameraX);
@@ -492,6 +509,8 @@ function setupScene() {
 
   carX = carStartX;
   wheelSpin = 0;
+  focusShiftTarget = 0;
+  focusShiftCurrent = 0;
 
   chassis = Matter.Bodies.rectangle(carX, roadY - chassisYOffset, 104, 24, {
     friction: 0.8,
@@ -514,6 +533,13 @@ function setupScene() {
   const frame = () => {
     if (!chassis || !wheelFront || !wheelRear) {
       return;
+    }
+
+    const focusDelta = focusShiftTarget - focusShiftCurrent;
+    if (Math.abs(focusDelta) < 0.1) {
+      focusShiftCurrent = focusShiftTarget;
+    } else {
+      focusShiftCurrent += focusDelta * focusShiftEase;
     }
 
     const speed = performance.now() < boostUntil ? boostSpeed : normalSpeed;
@@ -558,6 +584,8 @@ onBeforeUnmount(() => {
   wheelFront = null;
   wheelRear = null;
   roadSegments.length = 0;
+  focusShiftTarget = 0;
+  focusShiftCurrent = 0;
 });
 </script>
 
@@ -573,10 +601,21 @@ onBeforeUnmount(() => {
         <el-tab-pane label="登录" name="login">
           <el-form :model="loginForm" label-width="70px">
             <el-form-item label="用户名">
-              <el-input v-model="loginForm.username" placeholder="请输入用户名" />
+              <el-input
+                v-model="loginForm.username"
+                placeholder="请输入用户名"
+                @focus="onUsernameFocus"
+                @blur="onLoginFieldBlur"
+              />
             </el-form-item>
             <el-form-item label="密码">
-              <el-input v-model="loginForm.password" show-password placeholder="请输入密码" />
+              <el-input
+                v-model="loginForm.password"
+                show-password
+                placeholder="请输入密码"
+                @focus="onPasswordFocus"
+                @blur="onLoginFieldBlur"
+              />
             </el-form-item>
             <el-form-item>
               <el-checkbox v-model="rememberMe">记住我</el-checkbox>
